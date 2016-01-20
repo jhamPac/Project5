@@ -34,15 +34,14 @@ class MasterViewController: UITableViewController {
         navigationItem.rightBarButtonItem = promptButton
         
         startGame()
+        
     }
 
     // MARK: - Segues
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "showDetail" {
-            if let indexPath = self.tableView.indexPathForSelectedRow {
-        
-            }
+            
         }
     }
     
@@ -91,16 +90,37 @@ class MasterViewController: UITableViewController {
         }
     }
     
-    func wordIsPossible(word: String) -> Bool {
+    func wordIsPossible(word: String) -> Bool
+    {
+        // algorithm to determine if user text is a real word
+        var tempWord = title!.lowercaseString
+        
+        for letter in word.characters
+        {
+            if let pos = tempWord.rangeOfString(String(letter))
+            {
+                tempWord.removeAtIndex(pos.startIndex)
+            }
+            
+            else
+            {
+                return false
+            }
+        }
+        
         return true
     }
     
     func wordIsOriginal(word: String) -> Bool {
-        return true
+        return !objects.contains(word)
     }
     
-    func wordIsReal(word: String) -> Bool {
-        return true
+    func wordIsReal(word: String) -> Bool
+    {
+        let checker = UITextChecker()
+        let range = NSMakeRange(0, word.characters.count)
+        let misspelledRange = checker.rangeOfMisspelledWordInString(word, range: range, startingAt: 0, wrap: false, language: "en")
+        return misspelledRange.location == NSNotFound
     }
 
     // MARK: - Table View
