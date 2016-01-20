@@ -95,6 +95,7 @@ class MasterViewController: UITableViewController {
         // algorithm to determine if user text is a real word
         var tempWord = title!.lowercaseString
         
+        // compare against original word
         for letter in word.characters
         {
             if let pos = tempWord.rangeOfString(String(letter))
