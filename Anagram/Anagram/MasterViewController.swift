@@ -74,6 +74,8 @@ class MasterViewController: UITableViewController {
     func submitAnswer(answer: String)
     {
         let lowerAnswer = answer.lowercaseString
+        let errorTitle: String
+        let errorMessage: String
         
         if wordIsPossible(lowerAnswer)
         {
@@ -82,11 +84,31 @@ class MasterViewController: UITableViewController {
                 if wordIsReal(lowerAnswer)
                 {
                     objects.insert(answer, atIndex: 0)
-                    
                     let indexPath = NSIndexPath(forRow: 0, inSection: 0)
                     tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
                 }
+                
+                else
+                {
+                    errorTitle = "Word not recognised"
+                    errorMessage = "You can't make up words or it has to be longer than 3 letters"
+                    showErrorMessage(errorTitle, message: errorMessage)
+                }
             }
+            
+            else
+            {
+                errorTitle = "Word has already been used"
+                errorMessage = "Be more original"
+                showErrorMessage(errorTitle, message: errorMessage)
+            }
+        }
+        
+        else
+        {
+            errorTitle = "Word not possible"
+            errorMessage = "You can't spell that word from '\(title!.lowercaseString)'!"
+            showErrorMessage(errorTitle, message: errorMessage)
         }
     }
     
@@ -112,16 +134,29 @@ class MasterViewController: UITableViewController {
         return true
     }
     
-    func wordIsOriginal(word: String) -> Bool {
+    func wordIsOriginal(word: String) -> Bool
+    {
         return !objects.contains(word)
     }
     
     func wordIsReal(word: String) -> Bool
     {
+        guard word.characters.count >= 4 else
+        {
+            return false
+        }
+        
         let checker = UITextChecker()
         let range = NSMakeRange(0, word.characters.count)
         let misspelledRange = checker.rangeOfMisspelledWordInString(word, range: range, startingAt: 0, wrap: false, language: "en")
         return misspelledRange.location == NSNotFound
+    }
+    
+    func showErrorMessage(title: String, message: String)
+    {
+        let ac = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        presentViewController(ac, animated: true, completion: nil)
     }
 
     // MARK: - Table View
